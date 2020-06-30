@@ -1,6 +1,7 @@
 import { getCustomRepository } from 'typeorm';
 import HeroesRepository from '../repositories/HeroesRepository';
 import Hero from '../entities/Hero';
+import AppError from '../errors/AppError';
 
 interface IRequest {
   name: string;
@@ -13,7 +14,7 @@ class CreateHeroService {
 
     const findHero = await heroesRepository.findByName(name);
 
-    if (findHero) throw new Error('This hero already exists.');
+    if (findHero) throw new AppError('This hero already exists.', 403);
 
     const hero = heroesRepository.create({ name, rank });
 
