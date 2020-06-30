@@ -1,5 +1,6 @@
-import IHeroDTO from '../dtos/IHeroDTO';
+import { getCustomRepository } from 'typeorm';
 import HeroesRepository from '../repositories/HeroesRepository';
+import Hero from '../entities/Hero';
 
 interface IRequest {
   name: string;
@@ -7,18 +8,16 @@ interface IRequest {
 }
 
 class CreateHeroService {
-  private heroesRepository: HeroesRepository;
+  public async execute({ name, rank }: IRequest): Promise<Hero> {
+    const heroesRepository = getCustomRepository(HeroesRepository);
 
-  constructor(heroesRepository: HeroesRepository) {
-    this.heroesRepository = heroesRepository;
-  }
-
-  public execute({ name, rank }: IRequest): IHeroDTO {
-    const findHero = this.heroesRepository.findByName(name);
+    const findHero = await heroesRepository.findByName(name);
 
     if (findHero) throw new Error('This hero already exists.');
 
-    const hero = this.heroesRepository.create({ name, rank });
+    const hero = heroesRepository.create({ name, rank });
+
+    await heroesRepository.save(hero);
 
     return hero;
   }

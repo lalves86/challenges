@@ -1,17 +1,15 @@
-import { uuid } from 'uuidv4';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity('heroes')
 class Hero {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
   name: string;
 
+  @Column()
   rank: string;
-
-  constructor({ name, rank }: Omit<Hero, 'id'>) {
-    this.id = uuid();
-    this.name = name;
-    this.rank = rank;
-  }
 }
 
 export default Hero;

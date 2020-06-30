@@ -1,24 +1,24 @@
 import { Router } from 'express';
+import { getCustomRepository } from 'typeorm';
 import HeroesRepository from '../repositories/HeroesRepository';
 import CreateHeroService from '../services/CreateHeroService';
 import UpdateHeroService from '../services/UpdateHeroService';
-import DeleteHeroService from '../services/DeleteHeroService';
 
 const heroesRouter = Router();
 
-const heroesRepository = new HeroesRepository();
-
-heroesRouter.get('/', (request, response) => {
-  const heroes = heroesRepository.index();
+heroesRouter.get('/', async (request, response) => {
+  const heroesRepository = getCustomRepository(HeroesRepository);
+  const heroes = await heroesRepository.find();
 
   return response.json(heroes);
 });
 
-heroesRouter.get('/:id', (request, response) => {
+heroesRouter.get('/:id', async (request, response) => {
   try {
     const { id } = request.params;
 
-    const heroes = heroesRepository.findById(id);
+    const heroesRepository = getCustomRepository(HeroesRepository);
+    const heroes = await heroesRepository.findById(id);
 
     return response.json(heroes);
   } catch (err) {
@@ -26,13 +26,13 @@ heroesRouter.get('/:id', (request, response) => {
   }
 });
 
-heroesRouter.post('/', (request, response) => {
+heroesRouter.post('/', async (request, response) => {
   try {
     const { name, rank } = request.body;
 
-    const createHero = new CreateHeroService(heroesRepository);
+    const createHero = new CreateHeroService();
 
-    const hero = createHero.execute({ name, rank });
+    const hero = await createHero.execute({ name, rank });
 
     return response.json(hero);
   } catch (err) {
@@ -40,14 +40,14 @@ heroesRouter.post('/', (request, response) => {
   }
 });
 
-heroesRouter.put('/:id', (request, response) => {
+heroesRouter.put('/:id', async (request, response) => {
   try {
     const { id } = request.params;
     const { name, rank } = request.body;
 
-    const updateHero = new UpdateHeroService(heroesRepository);
+    const updateHero = new UpdateHeroService();
 
-    const hero = updateHero.execute({ id, name, rank });
+    const hero = await updateHero.execute({ id, name, rank });
 
     return response.json(hero);
   } catch (err) {
@@ -55,15 +55,15 @@ heroesRouter.put('/:id', (request, response) => {
   }
 });
 
-heroesRouter.delete('/:id', (request, response) => {
+heroesRouter.delete('/:id', async (request, response) => {
   try {
     const { id } = request.params;
 
-    const deleteHero = new DeleteHeroService(heroesRepository);
+    const heroesRepository = getCustomRepository(HeroesRepository);
 
-    const hero = deleteHero.execute(id);
+    await heroesRepository.delete(id);
 
-    return response.json({ message: hero });
+    return response.json({ message: `Hero ${id} deleted` });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
