@@ -18,6 +18,10 @@ class HeroesRepository implements IHeroesRepository {
     return findHero;
   }
 
+  public async all(): Promise<Hero[]> {
+    return this.heroes;
+  }
+
   public async create({ name, rank }: ICreateHeroDTO): Promise<Hero> {
     const hero = new Hero();
 
@@ -38,6 +42,12 @@ class HeroesRepository implements IHeroesRepository {
     this.heroes[findIndex] = hero;
 
     return hero;
+  }
+
+  public async delete(id: string): Promise<void> {
+    const findIndex = this.heroes.findIndex(hero => hero.id === id);
+
+    this.heroes.splice(findIndex, 1);
   }
 }
 

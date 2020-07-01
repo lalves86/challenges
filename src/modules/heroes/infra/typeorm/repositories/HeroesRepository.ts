@@ -24,6 +24,12 @@ class HeroesRepository implements IHeroesRepository {
     return findHero || undefined;
   }
 
+  public async all(): Promise<Hero[]> {
+    const heroes = await this.ormRepository.find();
+
+    return heroes;
+  }
+
   public async create({ name, rank }: ICreateHeroDTO): Promise<Hero> {
     const hero = this.ormRepository.create({ name, rank });
 
@@ -36,6 +42,10 @@ class HeroesRepository implements IHeroesRepository {
     const hero = this.ormRepository.save({ id, name, rank });
 
     return hero;
+  }
+
+  public async delete(id: string): Promise<void> {
+    await this.ormRepository.delete(id);
   }
 }
 
