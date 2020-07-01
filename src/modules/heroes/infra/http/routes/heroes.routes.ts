@@ -3,8 +3,10 @@ import { container } from 'tsyringe';
 import CreateHeroService from '@modules/heroes/services/CreateHeroService';
 import UpdateHeroService from '@modules/heroes/services/UpdateHeroService';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensuseAuthenticated';
+import HeroesController from '../controllers/HeroesController';
 
 const heroesRouter = Router();
+const heroesController = new HeroesController();
 
 heroesRouter.use(ensureAuthenticated);
 
@@ -24,26 +26,9 @@ heroesRouter.use(ensureAuthenticated);
 //   return response.json(heroes);
 // });
 
-heroesRouter.post('/', async (request, response) => {
-  const { name, rank } = request.body;
+heroesRouter.post('/', heroesController.create);
 
-  const createHero = container.resolve(CreateHeroService);
-
-  const hero = await createHero.execute({ name, rank });
-
-  return response.json(hero);
-});
-
-heroesRouter.put('/:id', async (request, response) => {
-  const { id } = request.params;
-  const { name, rank } = request.body;
-
-  const updateHero = container.resolve(UpdateHeroService);
-
-  const hero = await updateHero.execute({ id, name, rank });
-
-  return response.json(hero);
-});
+heroesRouter.put('/:id', heroesController.update);
 
 // heroesRouter.delete('/:id', async (request, response) => {
 //   const { id } = request.params;
