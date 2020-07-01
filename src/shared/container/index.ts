@@ -1,4 +1,5 @@
 import { container } from 'tsyringe';
+import '@modules/users/providers';
 import HeroesRepository from '@modules/heroes/infra/typeorm/repositories/HeroesRepository';
 import IHeroesRepository from '@modules/heroes/repositories/IHeroesRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
