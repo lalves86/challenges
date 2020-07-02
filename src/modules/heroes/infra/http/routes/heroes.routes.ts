@@ -25,7 +25,7 @@ heroesRouter.post(
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),
-      rank: Joi.string().required(),
+      rank: Joi.string().valid('C', 'B', 'A', 'S').required(),
     },
   }),
   heroesController.create,
@@ -36,7 +36,7 @@ heroesRouter.put(
   celebrate({
     [Segments.BODY]: {
       name: Joi.string(),
-      rank: Joi.string(),
+      rank: Joi.string().valid('C', 'B', 'A', 'S'),
     },
     [Segments.PARAMS]: {
       id: Joi.string().uuid().required(),
