@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { celebrate, Segments, Joi } from 'celebrate';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensuseAuthenticated';
 import HeroesController from '../controllers/HeroesController';
 
@@ -9,12 +10,49 @@ heroesRouter.use(ensureAuthenticated);
 
 heroesRouter.get('/', heroesController.index);
 
-heroesRouter.get('/:id', heroesController.show);
+heroesRouter.get(
+  '/:id',
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  heroesController.show,
+);
 
-heroesRouter.post('/', heroesController.create);
+heroesRouter.post(
+  '/',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string().required(),
+      rank: Joi.string().required(),
+    },
+  }),
+  heroesController.create,
+);
 
-heroesRouter.put('/:id', heroesController.update);
+heroesRouter.put(
+  '/:id',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string(),
+      rank: Joi.string(),
+    },
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  heroesController.update,
+);
 
-heroesRouter.delete('/:id', heroesController.delete);
+heroesRouter.delete(
+  '/:id',
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  heroesController.delete,
+);
 
 export default heroesRouter;
